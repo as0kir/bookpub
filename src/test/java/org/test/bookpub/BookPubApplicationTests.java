@@ -35,7 +35,6 @@ public class BookPubApplicationTests {
 	@Autowired
 	private BookRepository repository;
 
-	//@Value("${local.server.port}")
 	@LocalServerPort
 	private int port;
 
