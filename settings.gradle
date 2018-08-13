@@ -1,0 +1,3 @@
+rootProject.name = 'bookpub'
+
+include 'db-count-starter'
