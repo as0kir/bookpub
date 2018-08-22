@@ -8,12 +8,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.test.bookpub.repository.PublisherRepository;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {BookPubApplication.class, TestMockBeansConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {BookPubApplication.class, TestMockBeansConfig.class})
 public class PublisherRepositoryTests {
     @Autowired
     private PublisherRepository repository;
