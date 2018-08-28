@@ -11,12 +11,18 @@ import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils
 import org.test.bookpub.BookPubApplication
 import org.test.bookpub.TestMockBeansConfig
 import org.test.bookpub.entity.Book
+import org.test.bookpub.entity.Author
+import org.test.bookpub.entity.Publisher
 import org.test.bookpub.repository.BookRepository
+import org.test.bookpub.repository.PublisherRepository
 import spock.lang.*
+
+import static org.hamcrest.CoreMatchers.nullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.hamcrest.CoreMatchers.containsString
+import org.mockito.Mockito
 
 import javax.sql.DataSource
 
@@ -35,6 +41,9 @@ class SpockBookRepositorySpecification extends Specification {
 
     @Autowired
     private BookRepository repository;
+
+    @Autowired
+    private PublisherRepository publisherRepository;
 
     @Shared
     private MockMvc mockMvc;
@@ -74,5 +83,22 @@ class SpockBookRepositorySpecification extends Specification {
         then:
         repository.count() == 4
         savedBook.id > -1
+    }
+
+    def "Test RESTful GET books by publisher"() {
+        setup:
+        Publisher publisher = new Publisher("Strange Books")
+        publisher.setId(999)
+        Book book = new Book("978-1-98765-432-1", "Mystery Book", new Author("John", "Doe"), publisher)
+        publisher.setBooks([book])
+        Mockito.when(publisherRepository.count()).thenReturn(1L)
+        Mockito.when(publisherRepository.findById(1L)).thenReturn(Optional.of(publisher))
+        when:
+        def result = mockMvc.perform(get("/books/publisher/1"))
+        then:
+        result.andExpect(status().isOk())
+        result.andExpect(content().string(containsString("Strange Books")))
+        cleanup:
+        Mockito.reset(publisherRepository)
     }
 }
